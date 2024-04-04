@@ -263,6 +263,9 @@ Ogg_LIB:FILEPATH=C:/Users/artem/CLionProjects/lib/sfml/GCC 13.1.0 MinGW (SEH) - 
 //Path to a library.
 OpenAL_LIB:FILEPATH=C:/Users/artem/CLionProjects/lib/sfml/GCC 13.1.0 MinGW (SEH) - 64-bit/SFML-2.6.1/lib/libopenal32.a
 
+//The directory containing a CMake configuration file for OpenXLSX.
+OpenXLSX_DIR:PATH=OpenXLSX_DIR-NOTFOUND
+
 //Path to a file.
 SFML_DOC_DIR:PATH=SFML_DOC_DIR-NOTFOUND
 

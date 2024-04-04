@@ -5,6 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 #set(CMAKE_EXE_LINKER_FLAGS "-static -static-libgcc")
 #set(SFML_STATIC_LIBRARIES TRUE)
 
+
 add_executable(BIO main.cpp
         Animal.h
         Animal.cpp
@@ -16,7 +17,9 @@ add_executable(BIO main.cpp
         Field.cpp
         Graph.cpp
         Graph.cpp
-        Graph.h)
+        Graph.h
+        test.cpp)
+
 
 #set(SFML_DIR "C:\\Users\\artem\\CLionProjects\\lib\\sfml\\GCC 13.1.0 MinGW (SEH) - 64-bit\\SFML-2.6.1\\lib\\cmake\\SFML")
 #
@@ -24,3 +27,4 @@ add_executable(BIO main.cpp
 #
 #set(CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake_modules")
 #find_package(SFML 2.6 REQUIRED graphics network audio window system)
+

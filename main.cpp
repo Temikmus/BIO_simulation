@@ -5,6 +5,11 @@
 #include "World.h"
 #include <vector>
 
+void clearConsole() {
+    std::cout << "\033[2J\033[1;1H"; // ANSI escape-последовательность для очистки консоли
+    //system("cls");
+}
+
 void Game(World& world, Field& field,const Info& info_game)
 {
     while (!world.is_end())
@@ -39,6 +44,7 @@ void Game(World& world, Field& field,const Info& info_game)
         world.objects=world.visited_objects;
         world.visited_objects.clear();
         world.upgrade_current_t();
+        //clearConsole();
         std::cout<<world.get_current_t()<<"\n";
         world.print_statistic();
         field.print();
