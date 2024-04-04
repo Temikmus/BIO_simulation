@@ -17,8 +17,7 @@ add_executable(BIO main.cpp
         Field.cpp
         Graph.cpp
         Graph.cpp
-        Graph.h
-        test.cpp)
+        Graph.h)
 
 
 #set(SFML_DIR "C:\\Users\\artem\\CLionProjects\\lib\\sfml\\GCC 13.1.0 MinGW (SEH) - 64-bit\\SFML-2.6.1\\lib\\cmake\\SFML")
