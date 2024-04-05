@@ -11,7 +11,6 @@ public:
     void upgrade_current_t() {current_t++;}
     int get_end()const {return end;}
     int get_t_to_year()const {return t_to_year;}
-    std::vector<Animal*> get_objects()const {return objects;}
     void clear_statistic_animals();
     void print_statistic();
     void add_object(Animal* p);
@@ -19,7 +18,6 @@ public:
     void set_wolf(Wolf* p) {wolf = p;}
     void set_grass(Grass* p) {grass = p;}
     void set_rabbit(Rabbit* p) {rabbit = p;}
-    std::vector<Animal*> get_vector_objects()const {return objects;}
     std::vector<Animal*> objects;
     std::vector<Animal*> visited_objects;
 private:

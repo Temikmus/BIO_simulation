@@ -22,10 +22,15 @@ void Game(World& world, Field& field,const Info& info_game)
         {
             if (world.objects[0]->is_live())
             {
-                world.objects[0]->move(field, world.objects, info_game);
+                world.objects[0]->move(field, world.objects,world.visited_objects, info_game);
                 world.objects[0]->upgrade_info(world.get_current_t(), world.get_t_to_year());
                 world.visited_objects.push_back(world.objects[0]);
-                world.objects.erase(world.objects.begin());
+                if (world.objects.size()==1)
+                    world.objects.clear();
+                else
+                {
+                    world.objects.erase(world.objects.begin());
+                }
             }
             else
             {
@@ -35,16 +40,24 @@ void Game(World& world, Field& field,const Info& info_game)
                 {
                     world.objects[0]->reproduction_pair->reproduction_pair = nullptr;
                     world.objects[0]->reproduction_pair->set_stage(0);
+                    world.objects[0]->reproduction_pair->clear_current_time_reproduction();
                 }
-
                 delete world.objects[0];
-                world.objects.erase(world.objects.begin());
+                if (world.objects.size()==1)
+                    world.objects.clear();
+                else
+                {
+                    world.objects.erase(world.objects.begin());
+                }
             }
         }
         world.objects=world.visited_objects;
         world.visited_objects.clear();
         world.upgrade_current_t();
-        //clearConsole();
+        clearConsole();
+        clearConsole();
+        clearConsole();
+        clearConsole();
         std::cout<<world.get_current_t()<<"\n";
         world.print_statistic();
         field.print();
@@ -90,7 +103,7 @@ int main()
         coo=field.give_free_coordinates();
         if (coo.empty() || coo.size() < 2)
         {
-            std::cout<<"Game over";
+            std::cout<<"Game over. Overpopulation";
             return 0;
         }
         wolf->Set_coordinates(coo[0], coo[1]);
@@ -107,7 +120,7 @@ int main()
         coo=field.give_free_coordinates();
         if (coo.empty() || coo.size() < 2)
         {
-            std::cout<<"Game over";
+            std::cout<<"Game over. Overpopulation";
             return 0;
         }
         rabbit->Set_coordinates(coo[0], coo[1]);
@@ -124,7 +137,7 @@ int main()
         coo=field.give_free_coordinates();
         if (coo.empty() || coo.size() < 2)
         {
-            std::cout<<"Game over";
+            std::cout<<"Game over. Overpopulation";
             return 0;
         }
         grass->Set_coordinates(coo[0], coo[1]);
@@ -137,6 +150,10 @@ int main()
     world.set_rabbit(rabbit);
     world.set_grass(grass);
     world.set_wolf(wolf);
+    clearConsole();
+    clearConsole();
+    clearConsole();
+    clearConsole();
     Game(world, field, info_game);
     world.pop();
     return 0;

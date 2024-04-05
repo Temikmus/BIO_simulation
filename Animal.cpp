@@ -553,8 +553,12 @@
                 return ind;
             }
 
-            void Wolf::move(Field& field, std::vector<Animal*>& objects, const Info& info_game)
+            void Wolf::move(Field& field, std::vector<Animal*>& objects,  std::vector<Animal*>& visit_objects, const Info& info_game)
             {
+                if (x_coo()<0 || x_coo()>=info_game.n || y_coo()<0 || y_coo()>=info_game.m)
+                {
+                    return;
+                }
                 if (stage==0)
                 {
                     Graph G;
@@ -583,24 +587,59 @@
                                 if (G.path1.size()<=speed+1)
                                 {
                                     int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                    if (index==-1)
-                                        return;
-                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                    objects[index]->death();
-                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    if (index!=-1)
                                     {
-                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                        objects[index]->reproduction_pair->set_stage(0);
+                                        field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                        objects[index]->death();
+                                        if (objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            objects[index]->reproduction_pair->set_stage(0);
+                                            objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete objects[index];
+                                        if (objects.size()==1)
+                                            objects.clear();
+                                        else
+                                        {
+                                            objects.erase(objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
                                     }
-                                    delete objects[index];
-                                    objects.erase(objects.begin()+index);
-                                    this->time_without_food=0;
-                                    field.pop(x_coo(),y_coo());
-                                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                    if (this->sex=="F")
-                                        field.upgrade_field(31, x_coo(), y_coo());
                                     else
-                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    {
+                                        index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                        if (index==-1)
+                                            return;
+                                        field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                        visit_objects[index]->death();
+                                        if (visit_objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            visit_objects[index]->reproduction_pair->set_stage(0);
+                                            visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete visit_objects[index];
+                                        if (visit_objects.size()==1)
+                                            visit_objects.clear();
+                                        else
+                                        {
+                                            visit_objects.erase(visit_objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
+                                    }
                                 }
                                 else
                                 {
@@ -616,24 +655,59 @@
                                 if (G.path2.size()<=speed+1)
                                 {
                                     int index=find(objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                    if (index==-1)
-                                        return;
-                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                    objects[index]->death();
-                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    if (index!=-1)
                                     {
-                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                        objects[index]->reproduction_pair->set_stage(0);
+                                        field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                        objects[index]->death();
+                                        if (objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            objects[index]->reproduction_pair->set_stage(0);
+                                            objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete objects[index];
+                                        if (objects.size()==1)
+                                            objects.clear();
+                                        else
+                                        {
+                                            objects.erase(objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
                                     }
-                                    delete objects[index];
-                                    objects.erase(objects.begin()+index);
-                                    this->time_without_food=0;
-                                    field.pop(x_coo(),y_coo());
-                                    this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                    if (this->sex=="F")
-                                        field.upgrade_field(31, x_coo(), y_coo());
                                     else
-                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    {
+                                        index=find(visit_objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                        if (index==-1)
+                                            return;
+                                        field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                        visit_objects[index]->death();
+                                        if (visit_objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            visit_objects[index]->reproduction_pair->set_stage(0);
+                                            visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete visit_objects[index];
+                                        if (visit_objects.size()==1)
+                                            visit_objects.clear();
+                                        else
+                                        {
+                                            visit_objects.erase(visit_objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
+                                    }
                                 }
                                 else
                                 {
@@ -651,24 +725,59 @@
                             if (G.path1.size()<=speed+1)
                             {
                                 int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                objects[index]->death();
-                                if (objects[index]->reproduction_pair!= nullptr)
+                                if (index!=-1)
                                 {
-                                    objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                    objects[index]->reproduction_pair->set_stage(0);
+                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                    objects[index]->death();
+                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        objects[index]->reproduction_pair->set_stage(0);
+                                        objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete objects[index];
+                                    if (objects.size()==1)
+                                        objects.clear();
+                                    else
+                                    {
+                                        objects.erase(objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
                                 }
-                                delete objects[index];
-                                objects.erase(objects.begin()+index);
-                                this->time_without_food=0;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
+                                {
+                                    index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if (index==-1)
+                                        return;
+                                    field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                    visit_objects[index]->death();
+                                    if (visit_objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        visit_objects[index]->reproduction_pair->set_stage(0);
+                                        visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete visit_objects[index];
+                                    if (visit_objects.size()==1)
+                                        visit_objects.clear();
+                                    else
+                                    {
+                                        visit_objects.erase(visit_objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                }
                             }
                             else
                             {
@@ -685,24 +794,59 @@
                             if (G.path2.size()<=speed+1)
                             {
                                 int index=find(objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                objects[index]->death();
-                                if (objects[index]->reproduction_pair!= nullptr)
+                                if (index!=-1)
                                 {
-                                    objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                    objects[index]->reproduction_pair->set_stage(0);
+                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                    objects[index]->death();
+                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        objects[index]->reproduction_pair->set_stage(0);
+                                        objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete objects[index];
+                                    if (objects.size()==1)
+                                        objects.clear();
+                                    else
+                                    {
+                                        objects.erase(objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
                                 }
-                                delete objects[index];
-                                objects.erase(objects.begin()+index);
-                                this->time_without_food=0;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
+                                {
+                                    index=find(visit_objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                    if(index==-1)
+                                        return;
+                                    field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                    visit_objects[index]->death();
+                                    if (visit_objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        visit_objects[index]->reproduction_pair->set_stage(0);
+                                        visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete visit_objects[index];
+                                    if (visit_objects.size()==1)
+                                        visit_objects.clear();
+                                    else
+                                    {
+                                        visit_objects.erase(visit_objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                }
                             }
                             else
                             {
@@ -719,18 +863,41 @@
                             if (G.path3.size()<=speed+2)
                             {
                                 int index=find(objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
+                                if (index!=-1)
+                                {
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= objects[index];
+                                        objects[index]->set_stage(1);
+                                        objects[index]->reproduction_pair=this;
+                                    }
+                                }
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
-                                this->stage=1;
-                                this->reproduction_pair= objects[index];
-                                objects[index]->set_stage(1);
-                                objects[index]->reproduction_pair=this;
+                                {
+                                    index=find(visit_objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
+                                    if (index==-1)
+                                        return;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (visit_objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= visit_objects[index];
+                                        visit_objects[index]->set_stage(1);
+                                        visit_objects[index]->reproduction_pair=this;
+                                    }
+                                }
                             }
                             else
                             {
@@ -752,6 +919,8 @@
                                 if (neigh.empty())
                                     break;
                                 int c =rand()%neigh.size();
+                                if (c<0 || c>=neigh.size())
+                                    break;
                                 x1=neigh[c][0];
                                 y1=neigh[c][1];
                             }
@@ -772,24 +941,59 @@
                                 if (G.path1.size()<=speed+1)
                                 {
                                     int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                    if (index==-1)
-                                        return;
-                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                    objects[index]->death();
-                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    if (index!=-1)
                                     {
-                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                        objects[index]->reproduction_pair->set_stage(0);
+                                        field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                        objects[index]->death();
+                                        if (objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            objects[index]->reproduction_pair->set_stage(0);
+                                            objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete objects[index];
+                                        if (objects.size()==1)
+                                            objects.clear();
+                                        else
+                                        {
+                                            objects.erase(objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
                                     }
-                                    delete objects[index];
-                                    objects.erase(objects.begin()+index);
-                                    this->time_without_food=0;
-                                    field.pop(x_coo(),y_coo());
-                                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                    if (this->sex=="F")
-                                        field.upgrade_field(31, x_coo(), y_coo());
                                     else
-                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    {
+                                        index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                        if(index==-1)
+                                            return;
+                                        field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                        visit_objects[index]->death();
+                                        if (visit_objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            visit_objects[index]->reproduction_pair->set_stage(0);
+                                            visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete visit_objects[index];
+                                        if (visit_objects.size()==1)
+                                            visit_objects.clear();
+                                        else
+                                        {
+                                            visit_objects.erase(visit_objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
+                                    }
                                 }
                                 else
                                 {
@@ -805,24 +1009,59 @@
                                 if (G.path2.size()<=speed+1)
                                 {
                                     int index=find(objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                    if (index==-1)
-                                        return;
-                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                    objects[index]->death();
-                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    if (index!=-1)
                                     {
-                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                        objects[index]->reproduction_pair->set_stage(0);
+                                        field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                        objects[index]->death();
+                                        if (objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            objects[index]->reproduction_pair->set_stage(0);
+                                            objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete objects[index];
+                                        if (objects.size()==1)
+                                            objects.clear();
+                                        else
+                                        {
+                                            objects.erase(objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
                                     }
-                                    delete objects[index];
-                                    objects.erase(objects.begin()+index);
-                                    this->time_without_food=0;
-                                    field.pop(x_coo(),y_coo());
-                                    this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                    if (this->sex=="F")
-                                        field.upgrade_field(31, x_coo(), y_coo());
                                     else
-                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    {
+                                        index=find(visit_objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                        if (index==-1)
+                                            return;
+                                        field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                        visit_objects[index]->death();
+                                        if (visit_objects[index]->reproduction_pair!= nullptr)
+                                        {
+                                            visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                            visit_objects[index]->reproduction_pair->set_stage(0);
+                                            visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                        }
+                                        delete visit_objects[index];
+                                        if (visit_objects.size()==1)
+                                            visit_objects.clear();
+                                        else
+                                        {
+                                            visit_objects.erase(visit_objects.begin()+index);
+                                        }
+                                        this->time_without_food=0;
+                                        field.pop(x_coo(),y_coo());
+                                        this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                        if (this->sex=="F")
+                                            field.upgrade_field(31, x_coo(), y_coo());
+                                        else
+                                            field.upgrade_field(30, x_coo(), y_coo());
+                                    }
                                 }
                                 else
                                 {
@@ -840,24 +1079,59 @@
                             if (G.path1.size()<=speed+1)
                             {
                                 int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                objects[index]->death();
-                                if (objects[index]->reproduction_pair!= nullptr)
+                                if (index!=-1)
                                 {
-                                    objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                    objects[index]->reproduction_pair->set_stage(0);
+                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                    objects[index]->death();
+                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        objects[index]->reproduction_pair->set_stage(0);
+                                        objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete objects[index];
+                                    if (objects.size()==1)
+                                        objects.clear();
+                                    else
+                                    {
+                                        objects.erase(objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
                                 }
-                                delete objects[index];
-                                objects.erase(objects.begin()+index);
-                                this->time_without_food=0;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
+                                {
+                                    index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if (index==-1)
+                                        return;
+                                    field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                    visit_objects[index]->death();
+                                    if (visit_objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        visit_objects[index]->reproduction_pair->set_stage(0);
+                                        visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete visit_objects[index];
+                                    if (visit_objects.size()==1)
+                                        visit_objects.clear();
+                                    else
+                                    {
+                                        visit_objects.erase(visit_objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                }
                             }
                             else
                             {
@@ -874,24 +1148,59 @@
                             if (G.path2.size()<=speed+1)
                             {
                                 int index=find(objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                                objects[index]->death();
-                                if (objects[index]->reproduction_pair!= nullptr)
+                                if (index!=-1)
                                 {
-                                    objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                                    objects[index]->reproduction_pair->set_stage(0);
+                                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                                    objects[index]->death();
+                                    if (objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        objects[index]->reproduction_pair->set_stage(0);
+                                        objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete objects[index];
+                                    if (objects.size()==1)
+                                        objects.clear();
+                                    else
+                                    {
+                                        objects.erase(objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
                                 }
-                                delete objects[index];
-                                objects.erase(objects.begin()+index);
-                                this->time_without_food=0;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
+                                {
+                                    index=find(visit_objects, G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                    if (index==-1)
+                                        return;
+                                    field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                                    visit_objects[index]->death();
+                                    if (visit_objects[index]->reproduction_pair!= nullptr)
+                                    {
+                                        visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                        visit_objects[index]->reproduction_pair->set_stage(0);
+                                        visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                                    }
+                                    delete visit_objects[index];
+                                    if (visit_objects.size()==1)
+                                        visit_objects.clear();
+                                    else
+                                    {
+                                        visit_objects.erase(visit_objects.begin()+index);
+                                    }
+                                    this->time_without_food=0;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path2[G.path2.size()-1][0], G.path2[G.path2.size()-1][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                }
                             }
                             else
                             {
@@ -908,18 +1217,41 @@
                             if (G.path3.size()<=speed+2)
                             {
                                 int index=find(objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
+                                if (index!=-1)
+                                {
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= objects[index];
+                                        objects[index]->set_stage(1);
+                                        objects[index]->reproduction_pair=this;
+                                    }
+                                }
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
-                                this->stage=1;
-                                this->reproduction_pair= objects[index];
-                                objects[index]->set_stage(1);
-                                objects[index]->reproduction_pair=this;
+                                {
+                                    index=find(visit_objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
+                                    if (index==-1)
+                                        return;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (visit_objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= visit_objects[index];
+                                        visit_objects[index]->set_stage(1);
+                                        visit_objects[index]->reproduction_pair=this;
+                                    }
+                                }
                             }
                             else
                             {
@@ -959,18 +1291,41 @@
                             if (G.path1.size()<=speed+2)
                             {
                                 int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
+                                if (index!=-1)
+                                {
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= objects[index];
+                                        objects[index]->set_stage(1);
+                                        objects[index]->reproduction_pair=this;
+                                    }
+                                }
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
-                                this->stage=1;
-                                this->reproduction_pair= objects[index];
-                                objects[index]->set_stage(1);
-                                objects[index]->reproduction_pair=this;
+                                {
+                                    index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if(index==-1)
+                                        return;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (visit_objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= visit_objects[index];
+                                        visit_objects[index]->set_stage(1);
+                                        visit_objects[index]->reproduction_pair=this;
+                                    }
+                                }
                             }
                             else
                             {
@@ -1011,18 +1366,41 @@
                             if (G.path1.size()<=speed+2)
                             {
                                 int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                                if (index==-1)
-                                    return;
-                                field.pop(x_coo(),y_coo());
-                                this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
-                                if (this->sex=="F")
-                                    field.upgrade_field(31, x_coo(), y_coo());
+                                if (index!=-1)
+                                {
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= objects[index];
+                                        objects[index]->set_stage(1);
+                                        objects[index]->reproduction_pair=this;
+                                    }
+                                }
                                 else
-                                    field.upgrade_field(30, x_coo(), y_coo());
-                                this->stage=1;
-                                this->reproduction_pair= objects[index];
-                                objects[index]->set_stage(1);
-                                objects[index]->reproduction_pair=this;
+                                {
+                                    index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                                    if(index==-1)
+                                        return;
+                                    field.pop(x_coo(),y_coo());
+                                    this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                                    if (this->sex=="F")
+                                        field.upgrade_field(31, x_coo(), y_coo());
+                                    else
+                                        field.upgrade_field(30, x_coo(), y_coo());
+                                    if (visit_objects[index]->reproduction_pair== nullptr)
+                                    {
+                                        this->stage=1;
+                                        this->reproduction_pair= visit_objects[index];
+                                        visit_objects[index]->set_stage(1);
+                                        visit_objects[index]->reproduction_pair=this;
+                                    }
+                                }
                             }
                             else
                             {
@@ -1060,44 +1438,39 @@
                 {
                     if (reproduction_pair!= nullptr)
                     {
-                        if (reproduction_pair->is_live())
+                        this->current_time_reproduction++;
+                        //reproduction_pair->upgrade_current_time_reproduction();
+                        if (current_time_reproduction==time_for_reproduction && reproduction_pair->get_current_time_reproduction()==time_for_reproduction)
                         {
-                            this->current_time_reproduction++;
-                            //reproduction_pair->upgrade_current_time_reproduction();
-                            if (current_time_reproduction==time_for_reproduction && reproduction_pair->get_current_time_reproduction()==time_for_reproduction)
-                            {
-                                stage=0;
-                                reproduction_pair->set_stage(0);
-                                current_time_reproduction=0;
-                                reproduction_pair->clear_current_time_reproduction();
-                                std::vector<std::vector<int>> neigh;
-                                if (this->get_sex()=="M")
-                                    neigh= neighbours(field,field.get_n(), field.get_m(), reproduction_pair->x_coo(), reproduction_pair->y_coo(), 0);
-                                else
-                                    neigh= neighbours(field,field.get_n(), field.get_m(), this->x_coo(), this->y_coo(), 0);
-                                reproduction_pair->reproduction_pair= nullptr;
-                                reproduction_pair= nullptr;
-                                if (!neigh.empty())
-                                {
-                                    Wolf* p = new Wolf(info_game);
-                                    int c =rand()%neigh.size();
-                                    p->Set_coordinates(neigh[c][0], neigh[c][1]);
-                                    if (p->get_sex()=="F")
-                                        field.upgrade_field(31, p->x_coo(), p->y_coo());
-                                    else
-                                        field.upgrade_field(30, p->x_coo(), p->y_coo());
-                                    objects.push_back(p);
-                                }
-                            }
-                        }
-                        else
-                        {
-                            reproduction_pair= nullptr;
                             stage=0;
+                            reproduction_pair->set_stage(0);
+                            current_time_reproduction=0;
+                            reproduction_pair->clear_current_time_reproduction();
+                            std::vector<std::vector<int>> neigh;
+                            if (this->get_sex()=="M")
+                                neigh= neighbours(field,field.get_n(), field.get_m(), reproduction_pair->x_coo(), reproduction_pair->y_coo(), 0);
+                            else
+                                neigh= neighbours(field,field.get_n(), field.get_m(), this->x_coo(), this->y_coo(), 0);
+                            reproduction_pair->reproduction_pair= nullptr;
+                            reproduction_pair= nullptr;
+                            if (!neigh.empty())
+                            {
+                                Wolf* p = new Wolf(info_game);
+                                int c =rand()%neigh.size();
+                                p->Set_coordinates(neigh[c][0], neigh[c][1]);
+                                if (p->get_sex()=="F")
+                                    field.upgrade_field(31, p->x_coo(), p->y_coo());
+                                else
+                                    field.upgrade_field(30, p->x_coo(), p->y_coo());
+                                objects.push_back(p);
+                            }
                         }
                     }
                     else
+                    {
                         stage=0;
+                        clear_current_time_reproduction();
+                    }
                 }
             }
 
@@ -1126,8 +1499,12 @@ void Grass::clear_statistic() {
     age_old_grass=0;
 }
 
-void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_game)
+void Rabbit::move(Field& field, std::vector<Animal*>& objects, std::vector<Animal*>& visit_objects, const Info& info_game)
 {
+    if (x_coo()<0 || x_coo()>=info_game.n || y_coo()<0 || y_coo()>=info_game.m)
+    {
+        return;
+    }
     field.upgrade_infected(vision, x_coo(), y_coo());
     if (stage==0)
     {
@@ -1153,24 +1530,59 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 if (G.path1.size()<=speed+1)
                 {
                     int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                    if (index==-1)
-                        return;
-                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                    objects[index]->death();
-                    if (objects[index]->reproduction_pair!= nullptr)
+                    if (index!=-1)
                     {
-                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                        objects[index]->reproduction_pair->set_stage(0);
+                        field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                        objects[index]->death();
+                        if (objects[index]->reproduction_pair!= nullptr)
+                        {
+                            objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                            objects[index]->reproduction_pair->set_stage(0);
+                            objects[index]->reproduction_pair->clear_current_time_reproduction();
+                        }
+                        delete objects[index];
+                        if (objects.size()==1)
+                            objects.clear();
+                        else
+                        {
+                            objects.erase(objects.begin()+index);
+                        }
+                        this->time_without_food=0;
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
                     }
-                    delete objects[index];
-                    objects.erase(objects.begin()+index);
-                    this->time_without_food=0;
-                    field.pop(x_coo(),y_coo());
-                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                    if (this->sex=="F")
-                        field.upgrade_field(21, x_coo(), y_coo());
                     else
-                        field.upgrade_field(20, x_coo(), y_coo());
+                    {
+                        index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (index==-1)
+                            return;
+                        field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                        visit_objects[index]->death();
+                        if (visit_objects[index]->reproduction_pair!= nullptr)
+                        {
+                            visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                            visit_objects[index]->reproduction_pair->set_stage(0);
+                            visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                        }
+                        delete visit_objects[index];
+                        if (visit_objects.size()==1)
+                            visit_objects.clear();
+                        else
+                        {
+                            visit_objects.erase(visit_objects.begin()+index);
+                        }
+                        this->time_without_food=0;
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                    }
                 }
                 else
                 {
@@ -1187,18 +1599,41 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 if (G.path3.size()<=speed+2)
                 {
                     int index=find(objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
-                    if (index==-1)
-                        return;
-                    field.pop(x_coo(),y_coo());
-                    this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
-                    if (this->sex=="F")
-                        field.upgrade_field(21, x_coo(), y_coo());
+                    if (index!=-1)
+                    {
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= objects[index];
+                            objects[index]->set_stage(1);
+                            objects[index]->reproduction_pair=this;
+                        }
+                    }
                     else
-                        field.upgrade_field(20, x_coo(), y_coo());
-                    this->stage=1;
-                    this->reproduction_pair= objects[index];
-                    objects[index]->set_stage(1);
-                    objects[index]->reproduction_pair=this;
+                    {
+                        index=find(visit_objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
+                        if (index==-1)
+                            return;
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (visit_objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= visit_objects[index];
+                            visit_objects[index]->set_stage(1);
+                            visit_objects[index]->reproduction_pair=this;
+                        }
+                    }
                 }
                 else
                 {
@@ -1211,23 +1646,160 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 }
             }
             else{
-                int x1=this->x_coo();
-                int y1=this->y_coo();
-                field.pop(x1,y1);
-                for(int i=0; i<speed; i++)
+                Graph G1;
+                for (int x1 = this->x_coo() - vision; x1 <= (this->x_coo() + vision); x1++)
                 {
-                    std::vector<std::vector<int>>neigh= neighbours(field,field.get_n(), field.get_m(), x1, y1, 0);
-                    if (neigh.empty())
-                        break;
-                    int c =rand()%neigh.size();
-                    x1=neigh[c][0];
-                    y1=neigh[c][1];
+                    for (int y1 = this->y_coo() - vision; y1 <= (this->y_coo() + vision); y1++) {
+                        if (x1 >= 0 && x1 < field.get_n() && y1 >= 0 && y1 < field.get_m()) {
+                            Vertex v;
+                            v.x = x1;
+                            v.y = y1;
+                            v.name = field.matrix_field[x1][y1];
+                            v.neighbours = neighbours(field, field.get_n(), field.get_m(), x1, y1, 3);
+                            G1.graph.push_back(v);
+                        }
+                    }
                 }
-                this->Set_coordinates(x1,y1);
-                if (this->sex=="F")
-                    field.upgrade_field(21, x_coo(), y_coo());
-                else
-                    field.upgrade_field(20, x_coo(), y_coo());
+                G1.BFS(this->x_coo(), this->y_coo(), 1, 20, 20, this->vision);
+                if (!G1.path1.empty())
+                {
+                    if (G1.path1.size()<=speed+1)
+                    {
+                        int index=find(objects, G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                        if (index!=-1)
+                        {
+                            field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                            objects[index]->death();
+                            if (objects[index]->reproduction_pair!= nullptr)
+                            {
+                                objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                objects[index]->reproduction_pair->set_stage(0);
+                                objects[index]->reproduction_pair->clear_current_time_reproduction();
+                            }
+                            delete objects[index];
+                            if (objects.size()==1)
+                                objects.clear();
+                            else
+                            {
+                                objects.erase(objects.begin()+index);
+                            }
+                            this->time_without_food=0;
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                        }
+                        else
+                        {
+                            index=find(visit_objects, G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                            if(index==-1)
+                                return;
+                            field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                            visit_objects[index]->death();
+                            if (visit_objects[index]->reproduction_pair!= nullptr)
+                            {
+                                visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                visit_objects[index]->reproduction_pair->set_stage(0);
+                                visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                            }
+                            delete visit_objects[index];
+                            if (visit_objects.size()==1)
+                                visit_objects.clear();
+                            else
+                            {
+                                visit_objects.erase(visit_objects.begin()+index);
+                            }
+                            this->time_without_food=0;
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                        }
+                    }
+                    else
+                    {
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G1.path1[speed][0], G1.path1[speed][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                    }
+                }
+                else if(!G1.path3.empty())
+                {
+                    if (G1.path3.size()<=speed+2)
+                    {
+                        int index=find(objects, G1.path3[G1.path3.size()-1][0], G1.path3[G1.path3.size()-1][1]);
+                        if (index!=-1)
+                        {
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path3[G1.path3.size()-2][0], G1.path3[G1.path3.size()-2][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                            if (objects[index]->reproduction_pair== nullptr)
+                            {
+                                this->stage=1;
+                                this->reproduction_pair= objects[index];
+                                objects[index]->set_stage(1);
+                                objects[index]->reproduction_pair=this;
+                            }
+                        }
+                        else
+                        {
+                            index=find(visit_objects, G1.path3[G1.path3.size()-1][0], G1.path3[G1.path3.size()-1][1]);
+                            if (index==-1)
+                                return;
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path3[G1.path3.size()-2][0], G1.path3[G1.path3.size()-2][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                            if (visit_objects[index]->reproduction_pair== nullptr)
+                            {
+                                this->stage=1;
+                                this->reproduction_pair= visit_objects[index];
+                                visit_objects[index]->set_stage(1);
+                                visit_objects[index]->reproduction_pair=this;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G1.path3[speed][0], G1.path3[speed][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                    }
+                }
+                else{
+                    int x1=this->x_coo();
+                    int y1=this->y_coo();
+                    field.pop(x1,y1);
+                    for(int i=0; i<speed; i++)
+                    {
+                        std::vector<std::vector<int>>neigh= neighbours(field,field.get_n(), field.get_m(), x1, y1, 0);
+                        if (neigh.empty())
+                            break;
+                        int c =rand()%neigh.size();
+                        x1=neigh[c][0];
+                        y1=neigh[c][1];
+                    }
+                    this->Set_coordinates(x1,y1);
+                    if (this->sex=="F")
+                        field.upgrade_field(21, x_coo(), y_coo());
+                    else
+                        field.upgrade_field(20, x_coo(), y_coo());
+                }
             }
         }
         else if(time_without_food>time_full_food && sex=="M")
@@ -1238,24 +1810,59 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 if (G.path1.size()<=speed+1)
                 {
                     int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                    if (index==-1)
-                        return;
-                    field.pop(objects[index]->x_coo(),objects[index]->y_coo());
-                    objects[index]->death();
-                    if (objects[index]->reproduction_pair!= nullptr)
+                    if (index!=-1)
                     {
-                        objects[index]->reproduction_pair->reproduction_pair= nullptr;
-                        objects[index]->reproduction_pair->set_stage(0);
+                        field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                        objects[index]->death();
+                        if (objects[index]->reproduction_pair!= nullptr)
+                        {
+                            objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                            objects[index]->reproduction_pair->set_stage(0);
+                            objects[index]->reproduction_pair->clear_current_time_reproduction();
+                        }
+                        delete objects[index];
+                        if (objects.size()==1)
+                            objects.clear();
+                        else
+                        {
+                            objects.erase(objects.begin()+index);
+                        }
+                        this->time_without_food=0;
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
                     }
-                    delete objects[index];
-                    objects.erase(objects.begin()+index);
-                    this->time_without_food=0;
-                    field.pop(x_coo(),y_coo());
-                    this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                    if (this->sex=="F")
-                        field.upgrade_field(21, x_coo(), y_coo());
                     else
-                        field.upgrade_field(20, x_coo(), y_coo());
+                    {
+                        index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (index==-1)
+                            return;
+                        field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                        visit_objects[index]->death();
+                        if (visit_objects[index]->reproduction_pair!= nullptr)
+                        {
+                            visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                            visit_objects[index]->reproduction_pair->set_stage(0);
+                            visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                        }
+                        delete visit_objects[index];
+                        if (visit_objects.size()==1)
+                            visit_objects.clear();
+                        else
+                        {
+                            visit_objects.erase(visit_objects.begin()+index);
+                        }
+                        this->time_without_food=0;
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                    }
                 }
                 else
                 {
@@ -1272,18 +1879,41 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 if (G.path3.size()<=speed+2)
                 {
                     int index=find(objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
-                    if (index==-1)
-                        return;
-                    field.pop(x_coo(),y_coo());
-                    this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
-                    if (this->sex=="F")
-                        field.upgrade_field(21, x_coo(), y_coo());
+                    if (index!=-1)
+                    {
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= objects[index];
+                            objects[index]->set_stage(1);
+                            objects[index]->reproduction_pair=this;
+                        }
+                    }
                     else
-                        field.upgrade_field(20, x_coo(), y_coo());
-                    this->stage=1;
-                    this->reproduction_pair= objects[index];
-                    objects[index]->set_stage(1);
-                    objects[index]->reproduction_pair=this;
+                    {
+                        index=find(visit_objects, G.path3[G.path3.size()-1][0], G.path3[G.path3.size()-1][1]);
+                        if (index==-1)
+                            return;
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G.path3[G.path3.size()-2][0], G.path3[G.path3.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (visit_objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= visit_objects[index];
+                            visit_objects[index]->set_stage(1);
+                            visit_objects[index]->reproduction_pair=this;
+                        }
+                    }
                 }
                 else
                 {
@@ -1296,23 +1926,160 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 }
             }
             else{
-                int x1=this->x_coo();
-                int y1=this->y_coo();
-                field.pop(x1,y1);
-                for(int i=0; i<speed; i++)
+                Graph G1;
+                for (int x1 = this->x_coo() - vision; x1 <= (this->x_coo() + vision); x1++)
                 {
-                    std::vector<std::vector<int>>neigh= neighbours(field,field.get_n(), field.get_m(), x1, y1, 0);
-                    if (neigh.empty())
-                        break;
-                    int c =rand()%neigh.size();
-                    x1=neigh[c][0];
-                    y1=neigh[c][1];
+                    for (int y1 = this->y_coo() - vision; y1 <= (this->y_coo() + vision); y1++) {
+                        if (x1 >= 0 && x1 < field.get_n() && y1 >= 0 && y1 < field.get_m()) {
+                            Vertex v;
+                            v.x = x1;
+                            v.y = y1;
+                            v.name = field.matrix_field[x1][y1];
+                            v.neighbours = neighbours(field, field.get_n(), field.get_m(), x1, y1, 3);
+                            G1.graph.push_back(v);
+                        }
+                    }
                 }
-                this->Set_coordinates(x1,y1);
-                if (this->sex=="F")
-                    field.upgrade_field(21, x_coo(), y_coo());
-                else
-                    field.upgrade_field(20, x_coo(), y_coo());
+                G1.BFS(this->x_coo(), this->y_coo(), 1, 21, 21, this->vision);
+                if (!G1.path1.empty())
+                {
+                    if (G1.path1.size()<=speed+1)
+                    {
+                        int index=find(objects, G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                        if (index!=-1)
+                        {
+                            field.pop(objects[index]->x_coo(),objects[index]->y_coo());
+                            objects[index]->death();
+                            if (objects[index]->reproduction_pair!= nullptr)
+                            {
+                                objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                objects[index]->reproduction_pair->set_stage(0);
+                                objects[index]->reproduction_pair->clear_current_time_reproduction();
+                            }
+                            delete objects[index];
+                            if (objects.size()==1)
+                                objects.clear();
+                            else
+                            {
+                                objects.erase(objects.begin()+index);
+                            }
+                            this->time_without_food=0;
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                        }
+                        else
+                        {
+                            index=find(visit_objects, G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                            if (index==-1)
+                                return;
+                            field.pop(visit_objects[index]->x_coo(),visit_objects[index]->y_coo());
+                            visit_objects[index]->death();
+                            if (visit_objects[index]->reproduction_pair!= nullptr)
+                            {
+                                visit_objects[index]->reproduction_pair->reproduction_pair= nullptr;
+                                visit_objects[index]->reproduction_pair->set_stage(0);
+                                visit_objects[index]->reproduction_pair->clear_current_time_reproduction();
+                            }
+                            delete visit_objects[index];
+                            if (visit_objects.size()==1)
+                                visit_objects.clear();
+                            else
+                            {
+                                visit_objects.erase(visit_objects.begin()+index);
+                            }
+                            this->time_without_food=0;
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path1[G1.path1.size()-1][0], G1.path1[G1.path1.size()-1][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                        }
+                    }
+                    else
+                    {
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G1.path1[speed][0], G1.path1[speed][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                    }
+                }
+                else if(!G1.path3.empty())
+                {
+                    if (G1.path3.size()<=speed+2)
+                    {
+                        int index=find(objects, G1.path3[G1.path3.size()-1][0], G1.path3[G1.path3.size()-1][1]);
+                        if (index!=-1)
+                        {
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path3[G1.path3.size()-2][0], G1.path3[G1.path3.size()-2][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                            if (objects[index]->reproduction_pair== nullptr)
+                            {
+                                this->stage=1;
+                                this->reproduction_pair= objects[index];
+                                objects[index]->set_stage(1);
+                                objects[index]->reproduction_pair=this;
+                            }
+                        }
+                        else
+                        {
+                            index=find(visit_objects, G1.path3[G1.path3.size()-1][0], G1.path3[G1.path3.size()-1][1]);
+                            if (index==-1)
+                                return;
+                            field.pop(x_coo(),y_coo());
+                            this->Set_coordinates(G1.path3[G1.path3.size()-2][0], G1.path3[G1.path3.size()-2][1]);
+                            if (this->sex=="F")
+                                field.upgrade_field(21, x_coo(), y_coo());
+                            else
+                                field.upgrade_field(20, x_coo(), y_coo());
+                            if (visit_objects[index]->reproduction_pair== nullptr)
+                            {
+                                this->stage=1;
+                                this->reproduction_pair= visit_objects[index];
+                                visit_objects[index]->set_stage(1);
+                                visit_objects[index]->reproduction_pair=this;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        field.pop(x_coo(),y_coo());
+                        this->Set_coordinates(G1.path3[speed][0], G1.path3[speed][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                    }
+                }
+                else{
+                    int x1=this->x_coo();
+                    int y1=this->y_coo();
+                    field.pop(x1,y1);
+                    for(int i=0; i<speed; i++)
+                    {
+                        std::vector<std::vector<int>>neigh= neighbours(field,field.get_n(), field.get_m(), x1, y1, 0);
+                        if (neigh.empty())
+                            break;
+                        int c =rand()%neigh.size();
+                        x1=neigh[c][0];
+                        y1=neigh[c][1];
+                    }
+                    this->Set_coordinates(x1,y1);
+                    if (this->sex=="F")
+                        field.upgrade_field(21, x_coo(), y_coo());
+                    else
+                        field.upgrade_field(20, x_coo(), y_coo());
+                }
             }
         }
         else if (this->sex=="F")
@@ -1323,18 +2090,41 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 if (G.path1.size()<=speed+2)
                 {
                     int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                    if (index==-1)
-                        return;
-                    field.pop(x_coo(), y_coo());
-                    this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
-                    if (this->sex=="F")
-                        field.upgrade_field(21, x_coo(), y_coo());
+                    if (index!=-1)
+                    {
+                        field.pop(x_coo(), y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= objects[index];
+                            objects[index]->set_stage(1);
+                            objects[index]->reproduction_pair=this;
+                        }
+                    }
                     else
-                        field.upgrade_field(20, x_coo(), y_coo());
-                    this->stage=1;
-                    this->reproduction_pair= objects[index];
-                    objects[index]->set_stage(1);
-                    objects[index]->reproduction_pair=this;
+                    {
+                        index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (index==-1)
+                            return;
+                        field.pop(x_coo(), y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (visit_objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= visit_objects[index];
+                            visit_objects[index]->set_stage(1);
+                            visit_objects[index]->reproduction_pair=this;
+                        }
+                    }
                 }
                 else
                 {
@@ -1375,18 +2165,41 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
                 if (G.path1.size()<=speed+2)
                 {
                     int index=find(objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
-                    if (index==-1)
-                        return;
-                    field.pop(x_coo(), y_coo());
-                    this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
-                    if (this->sex=="F")
-                        field.upgrade_field(21, x_coo(), y_coo());
+                    if (index!=-1)
+                    {
+                        field.pop(x_coo(), y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= objects[index];
+                            objects[index]->set_stage(1);
+                            objects[index]->reproduction_pair=this;
+                        }
+                    }
                     else
-                        field.upgrade_field(20, x_coo(), y_coo());
-                    this->stage=1;
-                    this->reproduction_pair= objects[index];
-                    objects[index]->set_stage(1);
-                    objects[index]->reproduction_pair=this;
+                    {
+                        index=find(visit_objects, G.path1[G.path1.size()-1][0], G.path1[G.path1.size()-1][1]);
+                        if (index==-1)
+                            return;
+                        field.pop(x_coo(), y_coo());
+                        this->Set_coordinates(G.path1[G.path1.size()-2][0], G.path1[G.path1.size()-2][1]);
+                        if (this->sex=="F")
+                            field.upgrade_field(21, x_coo(), y_coo());
+                        else
+                            field.upgrade_field(20, x_coo(), y_coo());
+                        if (visit_objects[index]->reproduction_pair== nullptr)
+                        {
+                            this->stage=1;
+                            this->reproduction_pair= visit_objects[index];
+                            visit_objects[index]->set_stage(1);
+                            visit_objects[index]->reproduction_pair=this;
+                        }
+                    }
                 }
                 else
                 {
@@ -1424,64 +2237,78 @@ void Rabbit::move(Field& field, std::vector<Animal*>& objects, const Info& info_
     {
         if (reproduction_pair!= nullptr)
         {
-            if (reproduction_pair->is_not_killed(field))
+            this->current_time_reproduction++;
+            //reproduction_pair->upgrade_current_time_reproduction();
+            if (current_time_reproduction==time_for_reproduction && reproduction_pair->get_current_time_reproduction()==time_for_reproduction)
             {
-                this->current_time_reproduction++;
-                //reproduction_pair->upgrade_current_time_reproduction();
-                if (current_time_reproduction==time_for_reproduction && reproduction_pair->get_current_time_reproduction()==time_for_reproduction)
-                {
-                    stage=0;
-                    reproduction_pair->set_stage(0);
-                    current_time_reproduction=0;
-                    reproduction_pair->clear_current_time_reproduction();
-                    std::vector<std::vector<int>> neigh;
-                    if (this->get_sex()=="M")
-                        neigh= neighbours(field,field.get_n(), field.get_m(), reproduction_pair->x_coo(), reproduction_pair->y_coo(), 0);
-                    else
-                        neigh= neighbours(field,field.get_n(), field.get_m(), this->x_coo(), this->y_coo(), 0);
-                    reproduction_pair->reproduction_pair= nullptr;
-                    reproduction_pair= nullptr;
-                    if (!neigh.empty())
-                    {
-                        auto* p = new Rabbit(info_game);
-                        int c =rand()%neigh.size();
-                        p->Set_coordinates(neigh[c][0], neigh[c][1]);
-                        if (p->get_sex()=="F")
-                            field.upgrade_field(21, p->x_coo(), p->y_coo());
-                        else
-                            field.upgrade_field(20, p->x_coo(), p->y_coo());
-                        objects.push_back(p);
-                    }
-                }
-            }
-            else
-            {
-                reproduction_pair= nullptr;
                 stage=0;
+                reproduction_pair->set_stage(0);
+                current_time_reproduction=0;
+                reproduction_pair->clear_current_time_reproduction();
+                std::vector<std::vector<int>> neigh;
+                if (this->get_sex()=="M")
+                    neigh= neighbours(field,field.get_n(), field.get_m(), reproduction_pair->x_coo(), reproduction_pair->y_coo(), 0);
+                else
+                    neigh= neighbours(field,field.get_n(), field.get_m(), this->x_coo(), this->y_coo(), 0);
+                reproduction_pair->reproduction_pair= nullptr;
+                reproduction_pair= nullptr;
+                if (!neigh.empty())
+                {
+                    auto* p = new Rabbit(info_game);
+                    int c =rand()%neigh.size();
+                    p->Set_coordinates(neigh[c][0], neigh[c][1]);
+                    if (p->get_sex()=="F")
+                        field.upgrade_field(21, p->x_coo(), p->y_coo());
+                    else
+                        field.upgrade_field(20, p->x_coo(), p->y_coo());
+                    objects.push_back(p);
+                }
             }
         }
         else
+        {
             stage=0;
+            clear_current_time_reproduction();
+        }
     }
 }
 
 
-void Grass::move(Field& field, std::vector<Animal*>& objects, const Info& info_game)
+void Grass::move(Field& field, std::vector<Animal*>& objects,std::vector<Animal*>& visit_objects, const Info& info_game)
 {
+    if (x_coo()<0 || x_coo()>=info_game.n || y_coo()<0 || y_coo()>=info_game.m)
+    {
+        return;
+    }
     if (stage==0) {
         std::vector<std::vector<int>> neigh = neighbours_grass(field, field.get_n(), field.get_m(), x_coo(), y_coo());
         for (int i = 0; i < neigh.size(); i++) {
             int index = find(objects, neigh[i][0], neigh[i][1]);
-            if (index==-1)
-                return;
-            //if (((Grass *) &objects[index])->reproduction_pair == nullptr)
-            if (objects[index]->reproduction_pair== nullptr)
+            if (index!=-1)
             {
-                this->stage = 1;
-                this->reproduction_pair = objects[index];
-                objects[index]->set_stage(1);
-                objects[index]->reproduction_pair = this;
-                break;
+                if (objects[index]->reproduction_pair== nullptr)
+                {
+                    this->stage = 1;
+                    this->reproduction_pair = objects[index];
+                    objects[index]->set_stage(1);
+                    objects[index]->reproduction_pair = this;
+                    break;
+                }
+            }
+            else
+            {
+                index = find(visit_objects, neigh[i][0], neigh[i][1]);
+                if (index!=-1)
+                {
+                    if (visit_objects[index]->reproduction_pair== nullptr)
+                    {
+                        this->stage = 1;
+                        this->reproduction_pair = visit_objects[index];
+                        visit_objects[index]->set_stage(1);
+                        visit_objects[index]->reproduction_pair = this;
+                        break;
+                    }
+                }
             }
         }
     }
@@ -1489,41 +2316,36 @@ void Grass::move(Field& field, std::vector<Animal*>& objects, const Info& info_g
     {
         if (reproduction_pair!= nullptr)
         {
-            if (reproduction_pair->is_not_killed(field))
+            this->current_time_reproduction++;
+            //reproduction_pair->upgrade_current_time_reproduction();
+            if (current_time_reproduction==time_for_reproduction && reproduction_pair->get_current_time_reproduction()==time_for_reproduction)
             {
-                this->current_time_reproduction++;
-                //reproduction_pair->upgrade_current_time_reproduction();
-                if (current_time_reproduction==time_for_reproduction && reproduction_pair->get_current_time_reproduction()==time_for_reproduction)
-                {
-                    stage=0;
-                    reproduction_pair->set_stage(0);
-                    current_time_reproduction=0;
-                    reproduction_pair->clear_current_time_reproduction();
-                    std::vector<std::vector<int>> neigh;
-                    neigh= neighbours(field,field.get_n(), field.get_m(), reproduction_pair->x_coo(), reproduction_pair->y_coo(), 0);
-                    if(neigh.empty())
-                    {
-                        neigh= neighbours(field,field.get_n(), field.get_m(), this->x_coo(), this->y_coo(), 0);
-                    }
-                    reproduction_pair->reproduction_pair= nullptr;
-                    reproduction_pair= nullptr;
-                    if (!neigh.empty())
-                    {
-                        auto* p = new Grass(info_game);
-                        int c =rand()%neigh.size();
-                        p->Set_coordinates(neigh[c][0], neigh[c][1]);
-                        field.upgrade_field(1, p->x_coo(), p->y_coo());
-                        objects.push_back(p);
-                    }
-                }
-            }
-            else
-            {
-                reproduction_pair= nullptr;
                 stage=0;
+                reproduction_pair->set_stage(0);
+                current_time_reproduction=0;
+                reproduction_pair->clear_current_time_reproduction();
+                std::vector<std::vector<int>> neigh;
+                neigh= neighbours(field,field.get_n(), field.get_m(), reproduction_pair->x_coo(), reproduction_pair->y_coo(), 0);
+                if(neigh.empty())
+                {
+                    neigh= neighbours(field,field.get_n(), field.get_m(), this->x_coo(), this->y_coo(), 0);
+                }
+                reproduction_pair->reproduction_pair= nullptr;
+                reproduction_pair= nullptr;
+                if (!neigh.empty())
+                {
+                    auto* p = new Grass(info_game);
+                    int c =rand()%neigh.size();
+                    p->Set_coordinates(neigh[c][0], neigh[c][1]);
+                    field.upgrade_field(1, p->x_coo(), p->y_coo());
+                    objects.push_back(p);
+                }
             }
         }
         else
+        {
             stage=0;
+            clear_current_time_reproduction();
+        }
     }
 }

@@ -70,6 +70,8 @@ void Field::print() const {
 }
 
 void Field::upgrade_field(int object, int x, int y) {
+    if (x<0 || x>=n || y<0 || y>=m)
+        return;
     matrix_field[x][y]=object;
 }
 
@@ -109,48 +111,6 @@ std::vector<int> Field::give_free_coordinates() {
     }
     return coo;
 }
-//
-//void infected_coo(int x, int y, int n, int m, int vision, std::vector<std::vector<int>>& infected_matrix)
-//{
-//    for(int i=x-vision; i<=x+vision; i++)
-//    {
-//        for(int j=y-vision; j<=y+vision; j++)
-//        {
-//            if (i>=0 && i<n && j>=0 && j<m)
-//                infected_matrix[i][j]=1;
-//        }
-//    }
-//}
-//
-//void Field::upgrade_infected(int vision_r, int x, int y) {
-//    std::vector<std::vector<int>> wolfs;
-//    for (int i=x-vision_r; i<=x+vision_r; i++)
-//    {
-//        for (int j=y-vision_r; j<=y+vision_r; j++)
-//        {
-//            if (i>=0 && i<n && j>=0 && j<m)
-//            {
-//                if (matrix_field[i][j]!=30 && matrix_field[i][j]!=31)
-//                {
-//                    infected_matrix[i][j]=0;
-//                }
-//                else
-//                {
-//                    std::vector<int> coo;
-//                    coo.push_back(i);
-//                    coo.push_back(j);
-//                    wolfs.push_back(coo);
-//                }
-//            }
-//        }
-//    }
-//    for(int i=0; i<wolfs.size(); i++)
-//    {
-//        infected_coo(wolfs[i][0], wolfs[i][1], this->n, this->m, 1, infected_matrix);
-//    }
-//}
-
-
 
 void infected_coo(int x, int y, int n, int m, int vision, std::vector<std::vector<int>>& infected_matrix)
 {
@@ -166,10 +126,9 @@ void infected_coo(int x, int y, int n, int m, int vision, std::vector<std::vecto
 
 void Field::upgrade_infected(int vision_r, int x, int y) {
     std::vector<std::vector<int>> wolfs;
-    vision_r = (vision_r/2)+1;
-    for (int i=0; i<n; i++)
+    for (int i=x-vision_r; i<=x+vision_r; i++)
     {
-        for (int j=0; j<m; j++)
+        for (int j=y-vision_r; j<=y+vision_r; j++)
         {
             if (i>=0 && i<n && j>=0 && j<m)
             {
@@ -189,6 +148,55 @@ void Field::upgrade_infected(int vision_r, int x, int y) {
     }
     for(int i=0; i<wolfs.size(); i++)
     {
-        infected_coo(wolfs[i][0], wolfs[i][1], this->n, this->m, vision_r, infected_matrix);
+        infected_coo(wolfs[i][0], wolfs[i][1], this->n, this->m, 1, infected_matrix);
     }
+}
+
+
+
+//void infected_coo(int x, int y, int n, int m, int vision, std::vector<std::vector<int>>& infected_matrix)
+//{
+//    for(int i=x-vision; i<=x+vision; i++)
+//    {
+//        for(int j=y-vision; j<=y+vision; j++)
+//        {
+//            if (i>=0 && i<n && j>=0 && j<m)
+//                infected_matrix[i][j]=1;
+//        }
+//    }
+//}
+
+//void Field::upgrade_infected(int vision_r, int x, int y) {
+//    std::vector<std::vector<int>> wolfs;
+//    vision_r = (vision_r/2)+1;
+//    for (int i=0; i<n; i++)
+//    {
+//        for (int j=0; j<m; j++)
+//        {
+//            if (i>=0 && i<n && j>=0 && j<m)
+//            {
+//                if (matrix_field[i][j]!=30 && matrix_field[i][j]!=31)
+//                {
+//                    infected_matrix[i][j]=0;
+//                }
+//                else
+//                {
+//                    std::vector<int> coo;
+//                    coo.push_back(i);
+//                    coo.push_back(j);
+//                    wolfs.push_back(coo);
+//                }
+//            }
+//        }
+//    }
+//    for(int i=0; i<wolfs.size(); i++)
+//    {
+//        infected_coo(wolfs[i][0], wolfs[i][1], this->n, this->m, vision_r, infected_matrix);
+//    }
+//}
+
+void Field::pop(int x, int y) {
+    if (x<0 || x>=n || y<0 || y>=m)
+        return;
+    matrix_field[x][y]=0;
 }

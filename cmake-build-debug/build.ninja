@@ -85,12 +85,6 @@ build CMakeFiles/BIO.dir/Graph.cpp.obj: CXX_COMPILER__BIO_unscanned_Debug C$:/Us
   OBJECT_DIR = CMakeFiles\BIO.dir
   OBJECT_FILE_DIR = CMakeFiles\BIO.dir
 
-build CMakeFiles/BIO.dir/test.cpp.obj: CXX_COMPILER__BIO_unscanned_Debug C$:/Users/artem/CLionProjects/BIO/test.cpp || cmake_object_order_depends_target_BIO
-  DEP_FILE = CMakeFiles\BIO.dir\test.cpp.obj.d
-  FLAGS = -g -fdiagnostics-color=always
-  OBJECT_DIR = CMakeFiles\BIO.dir
-  OBJECT_FILE_DIR = CMakeFiles\BIO.dir
-
 
 # =============================================================================
 # Link build statements for EXECUTABLE target BIO
@@ -99,7 +93,7 @@ build CMakeFiles/BIO.dir/test.cpp.obj: CXX_COMPILER__BIO_unscanned_Debug C$:/Use
 #############################################
 # Link the executable BIO.exe
 
-build BIO.exe: CXX_EXECUTABLE_LINKER__BIO_Debug CMakeFiles/BIO.dir/main.cpp.obj CMakeFiles/BIO.dir/Animal.cpp.obj CMakeFiles/BIO.dir/World.cpp.obj CMakeFiles/BIO.dir/Info.cpp.obj CMakeFiles/BIO.dir/Field.cpp.obj CMakeFiles/BIO.dir/Graph.cpp.obj CMakeFiles/BIO.dir/test.cpp.obj
+build BIO.exe: CXX_EXECUTABLE_LINKER__BIO_Debug CMakeFiles/BIO.dir/main.cpp.obj CMakeFiles/BIO.dir/Animal.cpp.obj CMakeFiles/BIO.dir/World.cpp.obj CMakeFiles/BIO.dir/Info.cpp.obj CMakeFiles/BIO.dir/Field.cpp.obj CMakeFiles/BIO.dir/Graph.cpp.obj
   FLAGS = -g
   LINK_LIBRARIES = -lkernel32 -luser32 -lgdi32 -lwinspool -lshell32 -lole32 -loleaut32 -luuid -lcomdlg32 -ladvapi32
   OBJECT_DIR = CMakeFiles\BIO.dir

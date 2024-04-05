@@ -13,7 +13,6 @@ public:
     void Set_coordinates(int x, int y);
     int x_coo()const {return x;}
     int y_coo()const {return y;}
-    void upgrade_age() {age++;}
     virtual int is_live()const { return 1; }
     virtual void upgrade_info(int current_t, int t_to_year);
     virtual void death() {}
@@ -24,7 +23,7 @@ public:
     int get_current_time_reproduction()const {return current_time_reproduction;}
     void upgrade_current_time_reproduction() {current_time_reproduction++;}
     void clear_current_time_reproduction() {current_time_reproduction=0;}
-    virtual void move(Field& field, std::vector<Animal*>& objects, const Info& info_game) {}
+    virtual void move(Field& field, std::vector<Animal*>& objects,std::vector<Animal*>& visit_objects, const Info& info_game) {}
     virtual void clear_statistic();
     static int Get_number_animals() {return number_animals;}
     static int Get_number_died_animals() {return number_died_animals;}
@@ -52,7 +51,7 @@ class Wolf: public Animal
 {
 public:
     Wolf(const Info& data);
-    void move(Field& field, std::vector<Animal*>& objects, const Info& info_game);
+    void move(Field& field, std::vector<Animal*>& objects,std::vector<Animal*>& visit_objects, const Info& info_game);
     std::string get_sex()const {return sex;}
     int get_old_age()const {return old_aged;}
     int is_old_age()const {return is_old_aged;}
@@ -89,7 +88,7 @@ class Rabbit: public Animal
 {
 public:
     Rabbit(const Info& data);
-    void move(Field& field, std::vector<Animal*>& objects, const Info& info_game);
+    void move(Field& field, std::vector<Animal*>& objects,std::vector<Animal*>& visit_objects, const Info& info_game);
     std::string get_sex() {return sex;}
     int get_old_age()const {return old_aged;}
     int is_old_age()const {return is_old_aged;}
@@ -126,7 +125,7 @@ class Grass: public Animal
 {
 public:
     Grass(const Info& data);
-    void move(Field& field, std::vector<Animal*>& objects, const Info& info_game);
+    void move(Field& field, std::vector<Animal*>& objects,std::vector<Animal*>& visit_objects, const Info& info_game);
     void upgrade_info(int current_t, int t_to_year);
     void death();
     void clear_statistic();
